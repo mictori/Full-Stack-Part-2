@@ -1,128 +1,51 @@
 import { useState, useEffect } from 'react';
-import Filter from './Components/Filter';
-import PersonForm from './Components/PersonForm';
-import Contacts from './Components/Contacts';
-import personsService from './Services/Persons';
-import Notification from './Components/Notification';
-import ErrorNotification from './Components/ErrorNotification';
+import Countries from './Components/Countries';
+import axios from 'axios';
+
 
 const App = () => {
-	const [persons, setPersons] = useState([]);
-	const [newName, setNewName] = useState('');
-	const [newNumber, setNewNumber] = useState('');
-	const [shownNames, setShownNames] = useState('');
-	const [notification, setNotification] = useState(null);
-	const [errorNotification, setErrorNotification] = useState(null);
+	const baseURL = 'https://studies.cs.helsinki.fi/restcountries/api/all';
+	const [value, setValue] = useState(null);
+	const [countriesNames, setCountriesNames] = useState([]);
+	const [countryData, setCountryData] = useState([]);
 
-	const namesToShow = shownNames ? shownNames : persons;
+	const handleChangeInput = (event) => {
+		if (event.target.value) {
+			let valueCapitalized = capitalizeValue(event.target.value);
+			setValue(valueCapitalized);
+		}
+	};
+
+	const capitalizeValue = (a) => {
+		return a[0].toUpperCase() + a.slice(1);
+	};
 
 	useEffect(() => {
-		personsService.getAll().then((initialContacts) => {
-			setPersons(initialContacts);
-		});
-	}, []);
-
-	//Getting value from input
-	const handleChangeName = (event) => {
-		setNewName(event.target.value);
-	};
-
-	const handleChangeNumber = (event) => {
-		setNewNumber(event.target.value);
-	};
-
-	//Filtering by name 
-	const filterNames = (event) => {
-		const filteredNames = persons.filter((person) =>
-			person.name.toLowerCase().includes(event.target.value.toLowerCase())
-		);
-		setShownNames(filteredNames);
-	};
-
-	//Adding new person
-	const addPerson = (event) => {
-		event.preventDefault();
-		setShownNames('');
-
-		const newNameObject = {
-			name: newName,
-			number: newNumber,
-			id: String(persons.length + 1),
-		};
-
-		const existingPerson = checkExistingPerson(newNameObject);
-		if (!existingPerson) {
-			personsService
-				.create(newNameObject)
-				.then((createdObject) => {
-				setPersons(persons.concat(createdObject));
+		if (value !== null) {
+			axios.get(baseURL).then((response) => {
+				const returnedCountries = response.data.filter((country) =>
+					country.name.common.includes(value)
+				);
+				setCountryData(returnedCountries);
+				const countriesNames = returnedCountries.map(
+					(country) => country.name.common
+				);
+				setCountriesNames(countriesNames);
+				setValue(null);
 			});
-		} else {
-			if (existingPerson.number === newNumber) {
-				setNotification(`${newName} is already added to phonebook`);
-				setTimeout(() => {
-					setNotification(null)
-				}, 5000);
-			} else {
-				if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-					const changedPerson = {...existingPerson, number: newNumber}
-					personsService
-						.update(changedPerson.id, changedPerson)
-						.then(returnedPerson => {
-							setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
-						})
-						.catch(error => {
-							setErrorNotification(`Error! ${existingPerson.name} is already removed from phonebook`)
-						})
-						setTimeout(() => {
-							setErrorNotification(null)
-						}, 5000);
-						setPersons(persons.filter(person => person.id !== existingPerson.id))
-				}
-			}
 		}
+	}, [value]);
 
-		setNewName('');
-		setNewNumber('');
-	};
+  console.log('country', countryData)
 
-	const checkExistingPerson = (person) => {
-		return persons.find(
-			(obj) => obj.name.toLowerCase() === person.name.toLowerCase()
-		)
-	}
-
-	//Deleting person
-	const removePerson = (id) => {
-		console.log(id);
-		const personToRemove = persons.find((person) => person.id === id);
-		if (confirm(`Delete ${personToRemove.name} from Phonebook?`)) {
-			personsService.remove(id);
-			setPersons(persons.filter((person) => person.id !== id));
-			setNotification('Number deleted!');
-			setTimeout(() => {
-				setNotification(null)
-			}, 3000);
-		}
-	};
 	return (
 		<div>
-			<h1>Phonebook</h1>
-			<div className='notification'>
-				<Notification message={notification} />  
-				<ErrorNotification message={errorNotification} />
+			<h1>Data for countries</h1>
+			<div>
+				<label htmlFor='search'>find countries</label>
+				<input id='search' onChange={handleChangeInput}></input>
 			</div>
-			<Filter filterNames={filterNames} />
-			<h2>Add a new</h2>
-			<PersonForm
-				addPerson={addPerson}
-				newName={newName}
-				newNumber={newNumber}
-				handleChangeName={handleChangeName}
-				handleChangeNumber={handleChangeNumber}
-			/>
-			<h2>Numbers</h2>
-			<Contacts namesToShow={namesToShow} removePerson={removePerson} />
+			<Countries countries={countriesNames} countryData={countryData} /> 
 		</div>
 	);
 };

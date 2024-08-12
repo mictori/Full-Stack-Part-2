@@ -1,68 +1,21 @@
 :root {
+	margin: 0 2rem;
 	box-sizing: border-box;
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-	line-height: 2;
 	font-weight: 400;
-	margin-left: 2rem;
-	color: hsl(0, 0%, 18%);
-	max-width: 100vh;
+	color: hsl(0, 0%, 17%);
+}
+
+h1 {
+	font-size: 3.2em;
 }
 
 input {
 	margin-left: 0.5rem;
-	background-color: hsl(0, 0%, 96%);
-	border: hsl(0, 0%, 77%) solid 0.07rem;
-	border-radius: 0.15rem;
 }
 
-h1 {
-	font-size: 3.5rem;
-	color: hsl(250, 100%, 65%);
-	margin: 0;
-}
-
-button {
-	padding: 0.2rem 1rem;
-	cursor: pointer;
-	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-	background-color: rgb(244, 243, 243);
-	border: hsl(0, 0%, 18%) solid 0.07rem;
-	border-radius: 0.2rem;
-	color: hsl(0, 0%, 18%);
-}
-
-button:hover {
-	background-color: hsl(250, 100%, 65%);
-	color: hsl(250, 100%, 98%);
-	border: hsl(250, 100%, 65%) solid 0.1rem;
-	border-radius: 0.2rem;
-}
-
-input:hover {
-	background-color: hsl(250, 100%, 98%);
-	border: hsl(250, 100%, 65%) solid 0.1rem;
-	border-radius: 0.15rem;
-}
-
-.notification--message {
-	margin: 0 auto;
-	display: inline-block;
-	background-color: hsl(250, 100%, 98%);
-	border: hsl(250, 100%, 65%) solid 0.1rem;
-	border-radius: 0.15rem;
-	padding: 0 0.5rem;
-}
-
-.error {
-	margin: 0 auto;
-	display: inline-block;
-	background-color: hsl(250, 100%, 98%);
-	border: hsl(0, 100%, 65%) solid 0.1rem;
-	border-radius: 0.15rem;
-	padding: 0 0.5rem;
-	color: hsl(0, 100%, 65%);
-}
-
-.notification {
-	height: 2.3rem;
+.flag--img {
+	width: 100%;
+	min-width: 10rem;
+	max-width: 18rem;
 }
